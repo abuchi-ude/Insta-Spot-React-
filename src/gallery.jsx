@@ -1,57 +1,7 @@
+//import { cards } from "./data";
+//import { useState } from "react";
 
-// DisplayCards.jsx
-import { useState, useEffect } from "react";
-import ImageModal from "./modals"; // Assuming 'modals.jsx' or similar for ImageModal
-import { saveCards, loadCards } from "./data"; // Assuming 'data.js' handles card persistence
-//mport NewPostModalContent from "./new-post"; // Assuming this is the component for adding new posts
-
-// We are now accepting 'onAddCard' as a prop
-function DisplayCards({ onAddCardToGallery }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null);
-  const [cards, setCards] = useState(() => loadCards());
-
-  // Use useEffect to save cards to localStorage whenever the 'cards' state changes
-  useEffect(() => {
-    saveCards(cards);
-  }, [cards]);
-
-  // useEffect to handle new cards added via prop
-  // This watches for external additions and updates the internal 'cards' state
-  useEffect(() => {
-    if (onAddCardToGallery && typeof onAddCardToGallery === 'function') {
-      const unsubscribe = onAddCardToGallery((newCard) => {
-        setCards(prevCards => {
-          // Check if the card already exists to prevent duplicates if onAddCard is called multiple times
-          if (prevCards.some(card => card.id === newCard.id)) {
-            return prevCards;
-          }
-          return [...prevCards, newCard];
-        });
-      });
-      return () => unsubscribe(); // Cleanup subscription
-    }
-  }, [onAddCardToGallery]);
-
-
-  const openModal = (card) => {
-    setSelectedCard(card);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedCard(null);
-  };
-
-  const handleLoveIconClick = (id) => {
-    setCards((prevCards) =>
-      prevCards.map((card) =>
-        card.id === id ? { ...card, liked: !card.liked } : card
-      )
-    );
-  };
-
+function DisplayCards({ cards, openModal, handleLoveIcon }) {
   if (!Array.isArray(cards) || cards.length === 0) {
     return (
       <div className="text-center p-6 text-gray-600">No cards to display.</div>
@@ -60,7 +10,7 @@ function DisplayCards({ onAddCardToGallery }) {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-[repeat(auto-fit,minmax(413px,1fr))] gap-6 p-6 w-full max-w-6xl mx-auto">
+      <div className="gallery grid grid-cols-[repeat(auto-fit,minmax(450px,1fr))] gap-6 p-6 w-full max-w-6xl mx-auto">
         {cards.map((card, index) => (
           <div
             className="grid-one-item p-4 rounded-lg shadow-md flex flex-col items-center transform transition-transform duration-300 justify-between"
@@ -85,7 +35,7 @@ function DisplayCards({ onAddCardToGallery }) {
                                       ? "text-red-500"
                                       : "text-gray-500 hover:text-gray-700"
                                   }`}
-                onClick={() => handleLoveIconClick(card.id)}
+                onClick={() => handleLoveIcon(card.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -100,12 +50,6 @@ function DisplayCards({ onAddCardToGallery }) {
           </div>
         ))}
       </div>
-
-      <ImageModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        cardData={selectedCard}
-      />
     </div>
   );
 }

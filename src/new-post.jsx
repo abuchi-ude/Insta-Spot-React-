@@ -1,38 +1,31 @@
 import { useState } from 'react';
-import { loadCards, saveCards } from './data';
+
 
 // Assuming InitialCardsData is not directly modified here,
 // but rather new data is passed up to the parent via onSubmit.
 
 function NewPostModalContent({ onClose, onSubmit }) {
   const [postTitle, setPostTitle] = useState('');
-  const [imageURL, setImageURL] = useState(''); // Stores the Data URL for the selected image
-  
-  // Removed the incomplete destructuring that caused a syntax error: const { card, }
-
+  const [imageURL, setImageURL] = useState(''); // Stores the Data URL for the selected image  
   const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents the default form submission (page reload)
+    e.preventDefault();
 
     // Generate a random number for the ID (between 7 and 100 inclusive)
     const randomNumber = Math.floor(Math.random() * (100 - 7 + 1)) + 7;
 
     // Prepare the new card data object
-    const newCard = {
+    const newCardData = {
       title: postTitle,
       image: imageURL, // This will now be the Data URL (base64 encoded image)
       id: randomNumber,
-      // Provide sensible default values for icon, iconName, liked
-      icon: '📷', // Example default icon (emoji)
-      iconName: 'Default Post', // Example default icon name
+      icon: '',
+      iconName: 'love-icon',
       liked: false // New posts are typically not liked by default
     };
-    const storedCards = loadCards(); // Load existing cards from localStorage
-    const updatedCards = [newCard, ...storedCards];
-    saveCards(updatedCards) // Add the new card to the existing cards
-    // Call the onSubmit prop from the parent component, passing the new card data.
-    // The parent component is responsible for adding this new card to its main data state.
+    
+
     if (onSubmit) { // Ensure onSubmit prop is provided before calling
-      onSubmit(newCard);
+      onSubmit(newCardData);
     }
 
     // Clear the form fields after successful submission

@@ -38,13 +38,14 @@ body {
     font-size: 15px;
   }
   #profile {
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
     align-items: center;
     padding: 4% 2%;
     font-size: 1rem;
   }
   #pp {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     gap: 10px;
   }
